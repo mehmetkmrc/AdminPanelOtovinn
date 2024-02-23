@@ -10,8 +10,9 @@ namespace AuthManual.Data
         {
             
         }
+		public DbSet<TBLImage> TBLImages { get; set; }
 
-        public DbSet<ApplicationUser> ApplicationUser { get; set; }
+		public DbSet<ApplicationUser> ApplicationUser { get; set; }
             
     }
 }

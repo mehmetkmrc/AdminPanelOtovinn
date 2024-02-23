@@ -1,9 +1,11 @@
 ﻿using AuthManual.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthManual.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RolesController : Controller
     {
         private readonly ApplicationDbContext _db;

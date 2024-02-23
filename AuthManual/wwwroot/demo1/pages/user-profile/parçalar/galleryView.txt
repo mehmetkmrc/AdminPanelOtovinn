@@ -1,0 +1,596 @@
+<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                <!--begin::Item-->
+                <div class="carousel-item active">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim1.jpg" alt="Resim 1" class="d-block mx-auto">
+					</div>
+					<br>
+					<div class="card-footer text-center">
+        					Kullanıcı Karşılama Ekranı
+    				</div>
+                </div>
+                <!--end::Item-->
+
+                <!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim2.jpg" alt="Resim 2" class="d-block mx-auto">	
+						</div>
+                    <br>
+					<div class="card-footer text-center">
+						Kullanıcı kayıt ekranı.
+						</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim3.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+					<br>
+                   <div class="card-footer text-center">
+					Kullanıcı kayıt ekranı devamı.
+					</div> 
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim4.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Kullanıcı giriş ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim5.jpg" alt="Resim 2" class="d-block mx-auto">
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Şifremi unuttum ekranı.
+						</div>
+					
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim6.jpg" alt="Resim 2" class="d-block mx-auto">	
+						</div>
+                    <br>
+					<div class="card-footer text-center">
+						Otovınn ana ekranı.	
+						</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim7.jpg" alt="Resim 2" class="d-block mx-auto">	
+						</div>
+                    <br>
+					<div class="card-footer text-center">
+						Otovınn story ekranı.	
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim8.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Otopark, oto yıkama, vale noktaları, oto kuaför ve lastik ekranlarının haritada görünümü.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim9.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Haritadan seçilen istasyonun detay ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim10.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+					<br>
+					<div class="card-footer text-center">
+						İstasyon detayındaki “Randevu” butonuna tıklandığı zaman gelen hizmet ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim11.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Seçili istasyonun yorum ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim12.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Vale gelsin ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim13.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						“Vale Çağır” butonuna tıklandığı zaman açılan vale formu ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim14.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Servis ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim15.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						“Servis Hizmeti Al” butonuna tıklandıktan sonra açılan servis formu.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim16.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						“Fiyat Al” butonuna tıklandıktan sonra açılan servis randevu ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim17.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						“Randevu Al” butonuna tıkladıktan sonra açılan bu ekranda kullanıcı randevuyu onaylar ve ödeme ekranına geçer. 	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim18.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Ana ekran “Şarj” butonu.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim19.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Fırsatlar ekranı.	
+					</div>
+					
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim20.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Fırsatlar detay ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim21.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+					<br>
+                    <div class="card-footer text-center">
+						Kullanıcıların istasyon aramak için kullandıkları ekran.
+					</div>
+					
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim22.jpg" alt="Resim 2" class="d-block mx-auto">	
+						</div>
+						<br>
+                    <div class="card-footer text-center">
+						Kullanıcıların ödeme yapabilecekleri ekran.	
+						</div>
+					
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim23.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Kullanıcıların çeşitli ödeme yöntemleri ile ödeme yaptıkları ekran.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim24.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Haklarım ile öde. Kullanıcı, hakkı olan hizmeti seçtiği takdirde QR ekranı açılır.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim25.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer  text-center">
+						Promosyon kodu ile öde.	
+					</div>
+					
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim26.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Bildirim ekranı.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim27.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+					Sepetim Ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim28.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						“Ödeme Yap” butonuna tıklandıktan sonra açılan ödeme seçenekleri ekranı. Kullanıcı cüzdan ve kredi kartı ile ödeme yapabilir.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim29.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Kredi kartı ile ödeme yapmak isteyen kullanıcılar “Tamam” butonuna tıklayarak güvenli ödeme ekranına yönlendirilir.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim30.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Güvenli ödeme ekranı.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim31.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Araçlarım ekranı.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim32.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Araç ekle ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim33.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div  class="card-footer text-center">
+						Profil ekranı.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim32.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Bilgilerim butonuna tıklandığı zaman çıkan ekran. Kullanıcı buradan bilgilerini güncelleyebilir.	 
+				  	</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim33.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Profili güncelle ekranı devamı.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim34.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Profili güncelle ekranında, kullanıcının kayıtlı adreslerinin listelendiği ekran.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim35.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Kullanıcı yeni adres eklediği ekran.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim36.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Bilgilerim ekranında “Parolamı Değiştir” butonuna tıklandığı zaman açılan ekran.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim37.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Profilde yer alan cüzdanım ekranı.
+Otopark ve Oto Servis hizmetlerinin ödemesinin alındığı ekran.
+
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim40.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						“Hızlı QR Oluştur” butonuna basıldığı zaman kullanıcıya sunulan ekran.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim41.jpg" alt="Resim 2" class="d-block mx-auto">	
+						</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Profilde yer alan “Kayıtlı Kartlarım” butonuna tıklandığı zaman açılan ekran.
+						</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim42.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Profilde yer alan “Fırsatlarım” butonuna tıklandığı zaman açılan ekran.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim43.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center">
+						Profilde yer alan “Randevularım” butonuna tıklandığı zaman açılan ekran.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim44.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Profilde yer alan “Arama Ayarlarım” butonuna tıklandığı zaman açılan ekran.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim45.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Profilde yer alan “Geçmiş İşlemlerim” butonuna tıklandığı zaman açılan ekran.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim46.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Geçmiş işlemlerim ekranında “Değerlendir” butonuna tıklandığı zaman açılan ekran.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim47.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Profilde yer alan “Siparişlerim” butonuna tıklandığı zaman açılan ekran.
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim48.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Oluşan sipariş detayına tıklandığında açılan sipariş ve ürün detay ekranı. 
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim49.jpg" alt="Resim 2" class="d-block mx-auto">	
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Kullanıcı “Sipariş Detay” ekranında “İptal Et” butonuna tıklayarak formu doldurur ve sipariş iptal hakkını kullanabilir.	
+					</div>
+                </div>
+                <!--end::Item-->
+				<!--begin::Item-->
+                <div class="carousel-item">
+					<div>
+						<img src="/demo1/img/otovınnResimler/Resim50.jpg" alt="Resim 2" class="d-block mx-auto">
+					</div>
+                    <br>
+					<div class="card-footer text-center" >
+						Kullanıcı “Profil” ekranından “Türkçe ve İngilizce” dil seçeneklerini seçebilir.
+					</div>
+                </div>
+                <!--end::Item-->
+				
+                <!-- Diğer 48 sayfa için aynı yapıyı tekrar edebilirsiniz -->
+
+            </div>
+
+            <!-- Left and right controls -->
+            <style>
+    .custom-carousel-control {
+        background-color: #28a745; /* Green color */
+        border-radius: 8px; /* Adjust the border-radius for soft corners */
+    }
+</style>
+
+<a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon custom-carousel-control" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+</a>
+
+<a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+    <span class="carousel-control-next-icon custom-carousel-control" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+</a>
+
+
+
+        </div>

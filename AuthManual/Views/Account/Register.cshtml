@@ -1,64 +1,144 @@
 ﻿@model RegisterViewModel
 @{
     ViewData["Title"] = "Register";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-info">Register</h1>
 
-<form asp-action="Register" method="post" role="form">
-    <h4>Create a new account</h4>
-    <hr/>
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="Email" class="col-md-2"></label>
-        <div class="col-md-10">
-            <input asp-for="Email"/>
-            <span asp-validation-for="Email" class="text-danger "></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="Name" class="col-md-2"></label>
-        <div class="col-md-10">
-            <input asp-for="Name"/>
-            <span asp-validation-for="Name" class="text-danger "></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password" class="col-md-2"></label>
-        <div class="col-md-10">
-            <input asp-for="Password" />
-            <span asp-validation-for="Password" class="text-danger "></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword" class="col-md-2"></label>
-        <div class="col-md-10">
-            <input asp-for="ConfirmPassword" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger "></span>
-        </div>
-    </div>
-    <div class="form-grouop">
-        <label asp-for="RoleSelected" class="col-md-2"></label>
-        <div class="col-md-10">
-            <select asp-for="RoleSelected" asp-items="@Model.RoleList" class="form-control">
-                <option disabled selected>--Select Role--</option>
-            </select>
-            
-        </div>
-    </div>
-    <input hidden asp-for="RoleList"/>
-    <div class="form-group">
-        <div class="col-md-2">
-            <button class="btn btn-success form-control" type="submit">Register</button>
-        </div>
-    </div>
-</form>
 
-        
-@section Scripts
-{
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
+@{
+    Layout = "/Areas/Identity/Pages/Account/_EnterLayout.cshtml";
 }
+
+
+<!--begin::Heading-->
+<div class="text-center mb-11">
+    <!--begin::Title-->
+    <h1 class="text-gray-900 fw-bolder mb-3">Otovınna Kayıt Ol ⥥</h1>
+    <!--end::Title-->
+    <!--begin::Subtitle-->
+    <div class="text-gray-500 fw-semibold fs-6">Sizi de Aramızda Görmek için Heyecanlıyızz</div>
+    <!--end::Subtitle=-->
+</div>
+<!--begin::Heading-->
+<!--begin::Login options-->
+<div class="row g-3 mb-9">
+    <!--begin::Col-->
+    <div class="col-md-6">
+        <!--begin::Google link=-->
+        <a href="#" class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
+            <img alt="Logo" src="@Url.Content("/demo1/assets/media/svg/brand-logos/google-icon.svg")" class="h-15px me-3" />Google ile Kayıt
+        </a>
+        <!--end::Google link=-->
+    </div>
+    <!--end::Col-->
+    <!--begin::Col-->
+    <div class="col-md-6">
+        <!--begin::Google link=-->
+        <a href="#" class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
+            <img alt="Logo" src="@Url.Content("/demo1/assets/media/svg/brand-logos/apple-black.svg")" class="theme-light-show h-15px me-3" />
+            <img alt="Logo" src="@Url.Content("/demo1/assets/media/svg/brand-logos/apple-black-dark.svg")" class="theme-dark-show h-15px me-3" />Apple ile Kayıt
+        </a>
+        <!--end::Google link=-->
+    </div>
+    <!--end::Col-->
+</div>
+<!--end::Login options-->
+<!--begin::Separator-->
+<div class="separator separator-content my-14">
+    <span class="w-125px text-gray-500 fw-semibold fs-7">Ya da email</span>
+</div>
+<!--end::Separator-->
+<div class="fv-row mb-8 fv-plugins-icon-container">
+    <!--begin::Email-->
+    <label asp-for="Email">Email Adresiniz:</label>
+    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" />
+    <span asp-validation-for="Email" class="text-danger"></span>
+    <!--end::Email-->
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+</div>
+<div class="fv-row mb-8 fv-plugins-icon-container">
+    <!--begin::Name-->
+    <label asp-for="Name">İsminiz:</label>
+    <input asp-for="Name" class="form-control" autocomplete="name" aria-required="true" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+    <!--end::Name-->
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+</div>
+<div class="fv-row mb-8 fv-plugins-icon-container" data-kt-password-meter="true">
+    <!--begin::Wrapper-->
+    <div class="mb-1">
+        <!--begin::Input wrapper-->
+        <div class="position-relative mb-3">
+            <label asp-for="Password">Şifrenizi Belirleyin:</label>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+
+            <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2" data-kt-password-meter-control="visibility">
+                <i class="ki-duotone ki-eye-slash fs-2"></i>                    <i class="ki-duotone ki-eye fs-2 d-none"></i>
+            </span>
+        </div>
+        <!--end::Input wrapper-->
+        <!--begin::Meter-->
+        <div class="d-flex align-items-center mb-3" data-kt-password-meter-control="highlight">
+            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+            <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"></div>
+        </div>
+        <!--end::Meter-->
+    </div>
+    <!--end::Wrapper-->
+    <!--begin::Hint-->
+    <div class="text-muted">
+        8 karakter ya da ha fazlasını kullanın; sembol numara ve küçük/Büyük harf içermeli.
+
+    </div>
+    <!--end::Hint-->
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+</div>
+<div class="fv-row mb-8 fv-plugins-icon-container">
+    <!--begin::Repeat Password-->
+    <label asp-for="ConfirmPassword">Şifrenizi Onaylayın: </label>
+    <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    <!--end::Repeat Password-->
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+</div>
+<div class="fv-row mb-8 fv-plugins-icon-container">
+    <label class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="toc" value="1">
+        <span class="form-check-label fw-semibold text-gray-700 fs-base ms-1">
+            <a href="#" class="ms-1 link-primary">Koşulları</a> Kabul Ediyorum.
+        </span>
+    </label>
+    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+</div>
+
+<div class="d-grid mb-10">
+    <button type="submit" id="kt_sign_up_submit" class="btn btn-success">
+
+        <!--begin::Indicator label-->
+        <span class="indicator-label">
+            Kayıt Ol
+        </span>
+        <!--end::Indicator label-->
+        <!--begin::Indicator progress-->
+        <span class="indicator-progress">
+            Lütfen Bekleyiniz...    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+        <!--end::Indicator progress-->
+    </button>
+</div>
+<div class="text-gray-500 text-center fw-semibold fs-6">
+    Zaten Hesabınız Var mı?
+
+    <a href="Account/Login" class="link-primary fw-semibold">
+        Giriş Yapınız
+    </a>
+</div>
+
+
+
+@* @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

@@ -1,6 +1,6 @@
 # AuthProjects
 This is an educational project made for deeper understanding of these concepts.
-In this project I am learning to implement user Authentication and Authorization, both manually implementing and using Microsofts ready made codes to scaffold. 
+In this project I am learning to implement user Authentication and Authorization into my main page, the app who can see photos and admin can load pages, both manually implementing and using Microsofts ready made codes to scaffold. 
 
 # Features
 This project has the following implemented into it:
@@ -10,6 +10,7 @@ This project has the following implemented into it:
 * Authorization based on Roles
 * The ability to create Roles and Claims for users
 * Creating and manging users and Roles in an easy to use environment
+* Going to home page to see photos or load photos if you are on admin role. 
 
 # Goals
 My goal from this project is to learn how to implement Authentication and Authorization in .NET Core. 

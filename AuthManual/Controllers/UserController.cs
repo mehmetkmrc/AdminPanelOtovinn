@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using AuthManual.Data;
 using AuthManual.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AuthManual.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _db;

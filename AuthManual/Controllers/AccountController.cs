@@ -15,14 +15,14 @@ namespace AuthManual.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UrlEncoder _urlEncoder;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, 
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
             UrlEncoder urlEncoder, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _urlEncoder = urlEncoder;
             _roleManager = roleManager;
-        } 
+        }
 
 
         //public IActionResult Index()
@@ -43,7 +43,7 @@ namespace AuthManual.Controllers
             }
 
             List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add( new SelectListItem()
+            listItems.Add(new SelectListItem()
             {
                 Value = "Admin",
                 Text = "Admin"
@@ -136,11 +136,8 @@ namespace AuthManual.Controllers
                 lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction("VerifyAuthenticatorCode", new { returnUrl, model.RememberMe });
-                }
-                return Redirect(returnUrl);
+                return RedirectToAction("Index", "TestImage");
+
             }
             if (result.IsLockedOut)
             {
@@ -171,7 +168,7 @@ namespace AuthManual.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-            // Configure and send a token
+        // Configure and send a token
         {
             if (ModelState.IsValid)
             {
@@ -186,7 +183,7 @@ namespace AuthManual.Controllers
                 var callbackurl = Url.Action("ResetPassword", "Account", new { code = code, userId = user.Id },
                     protocol: HttpContext.Request.Scheme);
 
-                return View("ForgotPasswordConfirmation", new ResetPasswordLinkViewModel{Link = callbackurl!});
+                return View("ForgotPasswordConfirmation", new ResetPasswordLinkViewModel { Link = callbackurl! });
             }
 
             return View(model);
@@ -204,7 +201,7 @@ namespace AuthManual.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-            // Configure and send a token
+        // Configure and send a token
         {
             if (ModelState.IsValid)
             {
@@ -221,15 +218,15 @@ namespace AuthManual.Controllers
                 {
                     return View("ResetPasswordConfirmation");
                 }
-                AddErrors(result );
+                AddErrors(result);
             }
 
             return View();
         }
 
         [HttpGet]
-        public async Task<IActionResult> EnableAuthenticator() 
-            // the method will be used anytime the user wants to enable authentication
+        public async Task<IActionResult> EnableAuthenticator()
+        // the method will be used anytime the user wants to enable authentication
         {
             string AuthenticationUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
@@ -244,7 +241,7 @@ namespace AuthManual.Controllers
             string AuthenticatorUri = string.Format(AuthenticationUriFormat, _urlEncoder.Encode("ManualAuth"),
                 _urlEncoder.Encode(user.Email), token);
 
-            var model = new TwoFactorAuthenticationViewModel { Token = token , QRCodeUrl = AuthenticatorUri};
+            var model = new TwoFactorAuthenticationViewModel { Token = token, QRCodeUrl = AuthenticatorUri };
             return View(model);
 
         }
@@ -292,7 +289,7 @@ namespace AuthManual.Controllers
                 return View(model);
             }
 
-            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(model.Code, model.RememberMe, rememberClient:false);
+            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(model.Code, model.RememberMe, rememberClient: false);
 
             if (result.Succeeded)
             {

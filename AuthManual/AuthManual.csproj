@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\template\**" />
+    <Content Remove="wwwroot\template\**" />
+    <EmbeddedResource Remove="wwwroot\template\**" />
+    <None Remove="wwwroot\template\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Kavenegar" Version="1.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />
@@ -20,7 +27,20 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\img\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Shared\_Enterance.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\_Enterance.cshtml" />
   </ItemGroup>
 
 </Project>
