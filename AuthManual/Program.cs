@@ -45,6 +45,14 @@ builder.Services.AddAuthorization(options =>
         ));
 });
 
+//var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+//builder.Services.AddSingleton(emailConfig);
+
+//builder.Services.AddScoped<IEmailService, EmailService>();
+
+
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 var app = builder.Build();
@@ -67,15 +75,15 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-	endpoints.MapControllerRoute(
-		name: "areas",
-		pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-	endpoints.MapControllerRoute(
-		name: "default",
-		pattern: "{controller=Account}/{action=Login}/{id?}");
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Account}/{action=Login}/{id?}");
 
-	endpoints.MapRazorPages(); // This maps Razor Pages, including those in areas
+    endpoints.MapRazorPages(); // This maps Razor Pages, including those in areas
 });
 
 
