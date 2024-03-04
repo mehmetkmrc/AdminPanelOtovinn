@@ -152,7 +152,7 @@ namespace AuthManual.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             // Retrieve user details based on userId
@@ -167,7 +167,8 @@ namespace AuthManual.Controllers
             {
                 // E-posta doğrulaması başarılı oldu, kullanıcının giriş yapmasına izin ver
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("ConfirmEmail", "Account"); // veya istediğiniz bir yere yönlendirin
+                return View("ConfirmEmail" +
+                    ""); // veya istediğiniz bir yere yönlendirin
             }
             else
             {
@@ -212,7 +213,7 @@ namespace AuthManual.Controllers
                 }
 
                 // Eğer kullanıcı doğrulanmışsa normal şekilde giriş yapılabilir.
-                return RedirectToAction("Index", "TestImage");
+                return RedirectToAction("Index", "Photo");
             }
             if (result.IsLockedOut)
             {
@@ -398,6 +399,10 @@ namespace AuthManual.Controllers
             ViewData["ReturnUrl"] = returnurl;
             return View(new VerifyAuthenticatorViewModel { ReturnUrl = returnurl, RememberMe = rememberMe });
         }
+
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

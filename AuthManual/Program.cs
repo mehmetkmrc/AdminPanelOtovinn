@@ -55,6 +55,11 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -69,6 +74,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+
 
 app.UseAuthentication(); // We need to authenticate the user first.
 app.UseAuthorization();
