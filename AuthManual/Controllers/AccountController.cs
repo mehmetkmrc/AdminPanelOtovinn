@@ -1,73 +1,30 @@
 ﻿using AuthManual.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Text.Encodings.Web;
+using Npgsql;
 
 namespace AuthManual.Controllers
 {
-    [Authorize]
+    
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UrlEncoder _urlEncoder;
-
-
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
-            UrlEncoder urlEncoder, RoleManager<IdentityRole> roleManager    
-            )
+        private readonly string _connectionString;
+        private readonly IConfiguration _configuration;
+        public AccountController(IConfiguration configuration)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _urlEncoder = urlEncoder;
-            _roleManager = roleManager;
-
+            _connectionString = "DefaultConnection"; // Veritabanı bağlantı dizesini buraya ekleyin
+            _configuration = configuration;
+        }
+        [HttpGet]
+        public IActionResult Register(string returnUrl = null)
+        {
+            return View();
         }
 
-
-
-
-        [AllowAnonymous]
-        [HttpGet] // Display all the properties the user has to enter
-        public async Task<IActionResult> Register(string? returnUrl = null)
-        {
-            // If admin role doesn't exist
-            if (!await _roleManager.RoleExistsAsync("Admin"))
-            {
-                // create role
-                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                await _roleManager.CreateAsync(new IdentityRole("User"));
-            }
-
-            List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem()
-            {
-                Value = "Admin",
-                Text = "Admin"
-            });
-            listItems.Add(new SelectListItem()
-            {
-                Value = "User",
-                Text = "User"
-            });
-
-            ViewData["ReturnUrl"] = returnUrl;
-            var registerViewModel = new RegisterViewModel()
-            {
-                RoleList = listItems
-            };
-            return View(registerViewModel);
-        }
-
-        [AllowAnonymous]
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
+        public async Task<IActionResult> Register(User model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             returnUrl = returnUrl ?? Url.Content("~/");
 
             if (!ModelState.IsValid)
@@ -75,370 +32,249 @@ namespace AuthManual.Controllers
                 return View(model);
             }
 
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
+            try
             {
-                // Doğrulama e-postasını gönder
-                await SendVerificationEmail(user);
-
-                // Kayıt başarılı, kullanıcıyı giriş yapması için yönlendir
-                // Ancak, burada kullanıcının e-posta doğrulanmış olup olmadığını kontrol etmeliyiz
-                // Eğer doğrulanmamışsa, kullanıcıyı giriş yapmaktan alıkoymalıyız.
-                if (!user.EmailConfirmed)
+                using (var connection = new NpgsqlConnection(_connectionString))
                 {
-                    TempData["Message"] = "Email adresinizi doğrulamadan giriş yapamazsınız. Lütfen e-postanızı kontrol edin ve doğrulama linkine tıklayın.";
-                    return RedirectToAction(nameof(Login));
+                    connection.Open();
+                    using (var cmd = new NpgsqlCommand("INSERT INTO Users (Name, Surname, MailAddress, Password, Role, EmailConfirmed, Status, CreatedDate, Last_Login) " +
+                                                       "VALUES (@Name, @Surname, @MailAddress, @Password, @Role, @EmailConfirmed, @Status, @CreatedDate, @Last_Login)", connection))
+                    {
+                        cmd.Parameters.AddWithValue("@Name", model.Name);
+                        cmd.Parameters.AddWithValue("@Surname", model.Surname);
+                        cmd.Parameters.AddWithValue("@MailAddress", model.MailAddress);
+                        cmd.Parameters.AddWithValue("@Password", model.Password);
+                        cmd.Parameters.AddWithValue("@Role", model.Role);
+                        cmd.Parameters.AddWithValue("@EmailConfirmed", model.EmailConfirmed);
+                        cmd.Parameters.AddWithValue("@Status", model.Status);
+                        cmd.Parameters.AddWithValue("@CreatedDate", model.CreatedDate);
+                        cmd.Parameters.AddWithValue("@Last_Login", model.Last_Login);
+
+                        cmd.ExecuteNonQuery();
+                    }
                 }
 
-                // Eğer kullanıcı doğrulanmışsa normal şekilde giriş yapılabilir.
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                TempData["Message"] = "Registration successful.";
                 return Redirect(returnUrl);
-
-                if (model.RoleSelected == "Admin")
-                {
-                    await _userManager.AddToRoleAsync(user, "Admin");
-                }
-                else
-                {
-                    await _userManager.AddToRoleAsync(user, "User");
-                }
             }
-            else
+            catch (Exception ex)
             {
-                AddErrors(result);
+                TempData["Error"] = "An error occurred: " + ex.Message;
+                return View(model);
             }
-
-            // Eğer kayıt işlemi başarısız olursa, yeniden kayıt sayfasını gösterirken modeli ve rol listesini doldurun
-            List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem()
-            {
-                Value = "Admin",
-                Text = "Admin"
-            });
-            listItems.Add(new SelectListItem()
-            {
-                Value = "User",
-                Text = "User"
-            });
-
-            model.RoleList = listItems;
-            return View(model);
         }
-
-
-
-        private async Task SendVerificationEmail(ApplicationUser user)
+        private async Task SignInUser(User user, bool isPersistent)
         {
-            var email = new Email
-            {
-                FromAddress = "mehmet.komurcu@ogr.iuc.edu.tr",
-                FromName = "Mehmet",
-                ToAddress = user.Email,
-                Subject = "Please verify your email address",
-                Body = $"Dear {user.Name},<br><br>" +
-               $"Thank you for registering. Please click the following link to verify your email address:<br><br>" +
-               $"<a href='{Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = await _userManager.GenerateEmailConfirmationTokenAsync(user) }, protocol: HttpContext.Request.Scheme)}'>Confirm Email</a><br><br>" +
-               $"Regards,<br>Your Application Team",
-                SmtpConnection = "smtp.gmail.com",
-                SmtpPort = 587, // Gmail SMTP port for TLS
-                SmtpUser = "mehmet.komurcu@ogr.iuc.edu.tr",
-                SmtpPassword = "77MTR8K1" // Gmail uygulama şifresi
-            };
+            // Oturum anahtarı oluştur
+            string sessionToken = Guid.NewGuid().ToString();
 
-            email.SendMail();
+            // Veritabanına oturum anahtarını kaydet
+            string connectionString = "DefaultConnection";
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // SQL sorgusu oluştur
+                string sql = "UPDATE Users SET SessionToken = @SessionToken WHERE id = @UserId";
+
+                // Sorguyu çalıştır
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("SessionToken", sessionToken);
+                    command.Parameters.AddWithValue("UserId", user.Id);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected == 0)
+                    {
+                        // Kullanıcıya oturum anahtarı ataması başarısız oldu
+                        // Gerekirse uygun bir hata işlemi yapabilirsiniz
+                        return;
+                    }
+                }
+            }
+
+            // Oturum anahtarını kullanıcıya bir şekilde iletin, örneğin çerez olarak
+            // HttpContext.Current.Response.Cookies.Add(new HttpCookie("SessionToken", sessionToken));
         }
-
-
-
-        [AllowAnonymous]
-        [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
-        {
-            // Retrieve user details based on userId
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            if (result.Succeeded)
-            {
-                // E-posta doğrulaması başarılı oldu, kullanıcının giriş yapmasına izin ver
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return View("ConfirmEmail" +
-                    ""); // veya istediğiniz bir yere yönlendirin
-            }
-            else
-            {
-                // Hata durumunu ele alın
-                // Örneğin, kullanıcıya bir hata sayfası gösterin veya uygun bir işlem yapın
-                return View("Error");
-            }
-        }
-
-
-        [AllowAnonymous]
         [HttpGet] // Display all the properties the user has to enter
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-
-        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             returnUrl = returnUrl ?? Url.Content("~/");
-            if (!ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
-                lockoutOnFailure: true);
-            if (result.Succeeded)
+            // Kullanıcıyı veritabanından kontrol et
+            var user = GetUserByEmail(model.MailAddress);
+
+            // Kullanıcı yoksa veya şifre uyuşmazsa
+            if (user == null || user.Password != model.Password)
             {
-                // Kullanıcı giriş yaptı, ancak e-postası doğrulanmamışsa, giriş yapmaktan alıkoy
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (!user.EmailConfirmed)
-                {
-                    await _signInManager.SignOutAsync();
-                    TempData["Message"] = "Email adresinizi doğrulamadan giriş yapamazsınız. Lütfen e-postanızı kontrol edin ve doğrulama linkine tıklayın.";
-                    return RedirectToAction(nameof(Login));
-                }
-
-                // Eğer kullanıcı doğrulanmışsa normal şekilde giriş yapılabilir.
-                return RedirectToAction("Index", "Photo");
-            }
-            if (result.IsLockedOut)
-            {
-                return View("LockedOut");
-            }
-
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return View(model);
-        }
-    
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("index", "Home");
-        }
-
-        // Forget Password
-        [AllowAnonymous]
-        [HttpGet] // Display all the properties the user has to enter
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-        // Configure and send a token
-        {
-
-            if (ModelState.IsValid)
-            {
-
-                // Kullanıcıyı e-posta adresine göre bul
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
-                {
-                    // Kullanıcı bulunamazsa hata mesajı gönder
-                    return Content("User Not found.");
-                }
-
-                // Kullanıcı bulunduğunda şifre sıfırlama kodu oluştur
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                // Şifre sıfırlama bağlantısı oluştur
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                
-                // Şifre sıfırlama bağlantısını e-posta ile gönder
-                await SendForgotEmail(user, callbackUrl);
-
-                // Şifre sıfırlama işleminin başarılı olduğuna dair onay sayfasını göster
-                //return View("ForgotPasswordConfirmation", new ResetPasswordLinkViewModel { Link = callbackUrl });
-                return RedirectToAction("ResetLinkSent");
-
-            }
-
-            // Geçersiz model durumunda formu tekrar göster
-            return View(model);
-        }
-
-        [AllowAnonymous]
-        [HttpGet] // Display all the properties the user has to enter
-        public IActionResult ResetLinkSent()
-        {
-            return View();
-        }
-
-
-        private async Task SendForgotEmail(IdentityUser user, string callbackUrl)
-        {
-            var email = new Email
-            {
-                FromAddress = "mehmet.komurcu@ogr.iuc.edu.tr",
-                FromName = "Mehmet",
-                ToAddress = user.Email,
-                Subject = "Please Reset Your Password",
-                Body = $"Dear user,<br><br>" +
-               $"I heard you forgot your password. Please click the following link to reset your password:<br><br>" +
-               $"<a href='{callbackUrl}'>Reset Password</a><br><br>" +
-               $"Regards,<br>Your Application Team",
-                SmtpConnection = "smtp.gmail.com",
-                SmtpPort = 587, // Change this according to your SMTP server configuration
-                SmtpUser = "mehmet.komurcu@ogr.iuc.edu.tr",
-                SmtpPassword = "77MTR8K1"
-            };
-
-            email.SendMail();
-        }
-
-
-
-
-        // Reset password
-        [AllowAnonymous]
-        [HttpGet] // Display all the properties the user has to enter
-        public IActionResult ResetPassword(string? code = null)
-        {
-            return code == null ? View("Error") : View();
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-        // Configure and send a token
-        {
-            if (ModelState.IsValid)
-            {
-                // Checking if user exists
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
-                {
-                    return Content("User Not found.");
-                }
-
-                var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
-
-                if (result.Succeeded)
-                {
-                    return View("ResetPasswordConfirmation");
-                }
-                AddErrors(result);
-            }
-
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> EnableAuthenticator()
-        // the method will be used anytime the user wants to enable authentication
-        {
-            string AuthenticationUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
-
-            // this will find the user that is logged in
-            var user = await _userManager.GetUserAsync(User);
-
-            // If there are any previous authenticators we will reset those
-            await _userManager.ResetAuthenticatorKeyAsync(user);
-
-            // Generating a new token
-            var token = await _userManager.GetAuthenticatorKeyAsync(user);
-            string AuthenticatorUri = string.Format(AuthenticationUriFormat, _urlEncoder.Encode("ManualAuth"),
-                _urlEncoder.Encode(user.Email), token);
-
-            var model = new TwoFactorAuthenticationViewModel { Token = token, QRCodeUrl = AuthenticatorUri };
-            return View(model);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EnableAuthenticator(TwoFactorAuthenticationViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.GetUserAsync(User);
-                var succeeded = await _userManager.VerifyTwoFactorTokenAsync(user,
-                    _userManager.Options.Tokens.AuthenticatorTokenProvider, model.Code);
-                if (succeeded)
-                {
-                    await _userManager.SetTwoFactorEnabledAsync(user, true);
-                }
-                else
-                {
-                    ModelState.AddModelError("Verify", "Your two factor auth code could not be validated.");
-                    return View(model);
-                }
-            }
-            return View("AuthenticationConfirmation");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnurl = null)
-        {
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
-            ViewData["ReturnUrl"] = returnurl;
-            return View(new VerifyAuthenticatorViewModel { ReturnUrl = returnurl, RememberMe = rememberMe });
-        }
-
-
-
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyAuthenticatorCode(VerifyAuthenticatorViewModel model)
-        {
-            model.ReturnUrl ??= Url.Content("~/");
-            if (!ModelState.IsValid)
-            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
             }
 
-            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(model.Code, model.RememberMe, rememberClient: false);
-
-            if (result.Succeeded)
+            // Kullanıcı giriş yaptı, ancak e-postası doğrulanmamışsa, giriş yapmaktan alıkoy
+            if (!user.EmailConfirmed)
             {
-                return LocalRedirect(model.ReturnUrl);
+                TempData["Message"] = "Email adresinizi doğrulamadan giriş yapamazsınız. Lütfen e-postanızı kontrol edin ve doğrulama linkine tıklayın.";
+                return RedirectToAction(nameof(Login));
             }
 
-            if (result.IsLockedOut)
-            {
-                return View("LockedOut");
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Invalid Code.");
-                return View(model);
-            }
-
+            // Eğer kullanıcı doğrulanmışsa normal şekilde giriş yapılabilir.
+            return RedirectToAction("Index", "Screen");
         }
 
-        private void AddErrors(IdentityResult result) // Helper method 
+        // Kullanıcıyı e-posta adresine göre veritabanından alır
+        private User GetUserByEmail(string email)
         {
-            foreach (var err in result.Errors)
+            
+            string connectionStrings = _configuration.GetConnectionString("DefaultConnection");
+            using (var connection = new NpgsqlConnection(connectionStrings))
             {
-                ModelState.AddModelError(string.Empty, err.Description);
+                connection.Open();
+
+                // SQL sorgusu oluştur
+                string sql = "SELECT * FROM Users WHERE MailAddress = @Email";
+
+                // Sorguyu çalıştır
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("Email", email);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new User
+                            {
+                                Id = Guid.Parse(reader["id"].ToString()),
+                                Name = reader["Name"].ToString(),
+                                Surname = reader["Surname"].ToString(),
+                                MailAddress = reader["MailAddress"].ToString(),
+                                Password = reader["Password"].ToString(),
+                                RoleId = Guid.Parse(reader["RoleId"].ToString()),
+                                EmailConfirmed = Convert.ToBoolean(reader["EmailConfirmed"]),
+                                Status = Convert.ToInt32(reader["Status"]),
+                                CreatedDate = Convert.ToDateTime(reader["createddate"]),
+                                Last_Login = Convert.ToDateTime(reader["Last_Login"])
+                            };
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
             }
         }
-    }
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Logout(Guid userId)
+		{
+			try
+			{
+				await SignOutUser(userId);
+				return RedirectToAction("Login", "Account");
+			}
+			catch (Exception ex)
+			{
+				// Log the exception for debugging
+				Console.WriteLine($"Logout error: {ex.Message}");
+				// Consider adding a user-friendly error message if appropriate
+				return RedirectToAction("Login", "Account"); // Redirect to a general error page or home page
+			}
+		}
+
+		private async Task SignOutUser(Guid userId)
+		{
+			string connectionString = _configuration.GetConnectionString("DefaultConnection");
+			using (var connection = new NpgsqlConnection(connectionString))
+			{
+				await connection.OpenAsync();
+
+				// Kullanıcıyı al, eğer kullanıcı bulunamazsa null olabilir
+				var user = await GetUserByIdAsync(userId);
+
+				// Kullanıcı null değilse devam edin
+				if (user != null)
+				{
+					var userOffset = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId).GetUtcOffset(DateTime.UtcNow);
+					DateTime lastLogin = DateTime.UtcNow.Add(userOffset);
+
+					// Last_Login alanını güncelle
+					var sqlCommand = new NpgsqlCommand("UPDATE Users SET Last_Login = @lastLogin WHERE Id = @Id", connection);
+					sqlCommand.Parameters.AddWithValue("@lastLogin", lastLogin);
+					sqlCommand.Parameters.AddWithValue("@Id", userId);
+
+					int rowsAffected = await sqlCommand.ExecuteNonQueryAsync();
+
+					if (rowsAffected == 0)
+					{
+						Console.WriteLine("Last_Login güncellenemedi!");
+					}
+				}
+				else
+				{
+					// Kullanıcı bulunamadıysa uygun şekilde işlem yapın, örneğin loglayın veya hata mesajı gösterin
+					Console.WriteLine("Kullanıcı bulunamadı!");
+				}
+			}
+		}
+
+		private async Task<User> GetUserByIdAsync(Guid userId)
+		{
+			string connectionString = _configuration.GetConnectionString("DefaultConnection");
+			using (var connection = new NpgsqlConnection(connectionString))
+			{
+				await connection.OpenAsync();
+
+				using (var command = new NpgsqlCommand("SELECT Id, Name, Surname, MailAddress, Password, RoleId, EmailConfirmed, Status, CreatedDate, Last_Login, TimeZoneId FROM Users WHERE Id = @Id", connection))
+				{
+					command.Parameters.AddWithValue("@Id", userId);
+
+					using (var reader = await command.ExecuteReaderAsync())
+					{
+						if (await reader.ReadAsync())
+						{
+							return new User
+							{
+								Id = reader.GetGuid(reader.GetOrdinal("Id")),
+								Name = reader.GetString(reader.GetOrdinal("Name")),
+								Surname = reader.GetString(reader.GetOrdinal("Surname")),
+								MailAddress = reader.GetString(reader.GetOrdinal("MailAddress")),
+								Password = reader.GetString(reader.GetOrdinal("Password")),
+								RoleId = reader.GetGuid(reader.GetOrdinal("RoleId")),
+								EmailConfirmed = reader.GetBoolean(reader.GetOrdinal("EmailConfirmed")),
+								Status = reader.GetInt32(reader.GetOrdinal("Status")),
+								CreatedDate = reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
+								Last_Login = reader.GetDateTime(reader.GetOrdinal("Last_Login")),
+								TimeZoneId = reader.GetString(reader.GetOrdinal("TimeZoneId"))
+							};
+						}
+						else
+						{
+							// Handle user not found scenario (e.g., log an error)
+							return null;
+						}
+					}
+				}
+			}
+		}
+
+
+
+		// Other methods like Login, ForgotPassword, ResetPassword, etc. can be implemented similarly
+	}
 }

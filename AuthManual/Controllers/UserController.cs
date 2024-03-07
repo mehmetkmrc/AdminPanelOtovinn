@@ -1,225 +1,341 @@
-﻿using System.Security.Claims;
-using AuthManual.Data;
+﻿using AuthManual.Data;
 using AuthManual.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Npgsql;
+using System.Data;
 
 namespace AuthManual.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        private readonly UserManager<IdentityUser> _userManager;
+        
+        private readonly string _connectionString;
 
-        public UserController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
+        public UserController()
         {
-            _db = db;
-            _userManager = userManager;
+            
+            _connectionString = "DefaultConnection"; // Veritabanı bağlantı dizesiburaya eklendi
         }
 
         public IActionResult Index()
         {
-            var userLisT = _db.ApplicationUser.ToList();
-            var userRoles = _db.UserRoles.ToList();
-            var roles = _db.Roles.ToList();
-            foreach (var user in userLisT)
+            var userList = GetUserListFromDatabase();
+            var userRoles = GetUserRolesFromDatabase();
+            var roles = GetRolesFromDatabase();
+            foreach (var user in userList)
             {
-                var role = userRoles.FirstOrDefault(u => u.UserId == user.Id);
+                var role = userRoles.FirstOrDefault(u => u.UserId == user.Id.ToString());
                 if (role == null)
                 {
-                    user.Role = "None";
+                    user.Role = new Role { Name = "None" };
                 }
                 else
                 {
-                    user.Role = roles.FirstOrDefault(u => u.Id == role.RoleId)!.Name;
+                    user.Role = roles.FirstOrDefault(u => u.Id == role.RoleId) ?? new Role { Name = "None" };
                 }
             }
 
-            return View(userLisT);
+
+            return View(userList);
         }
+
 
         [HttpGet]
         public IActionResult Edit(string userId)
         {
-            var dbUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId);
+            var dbUser = GetUserByIdFromDatabase(userId);
             if (dbUser == null)
             {
                 return NotFound();
             }
 
-            var userRole = _db.UserRoles.ToList();
-            var roles = _db.Roles.ToList();
-            var role = userRole.FirstOrDefault(u => u.UserId == dbUser.Id);
-            if (role != null)
+            var userRole = GetUserRoleFromDatabase(userId);
+            var roles = GetRolesFromDatabase();
+            if (userRole != null)
             {
-                dbUser.RoleId = roles.FirstOrDefault(u => u.Id == role.RoleId)!.Id;
+                dbUser.RoleId = userRole.RoleId;
             }
-
-            dbUser.RoleList = _db.Roles.Select(u => new SelectListItem
+            SelectListItem item = new SelectListItem();
+            dbUser.RoleList = roles.Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Text = u.Name,
-                Value = u.Id,
-            });
+                Value = u.Id, 
+            }).ToList();
 
             return View(dbUser);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ApplicationUser user)
-        {
-            if (ModelState.IsValid)
-            {
-                var dbUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == user.Id);
-                if (dbUser == null)
-                {
-                    return NotFound();
-                }
-
-                var userRole = _db.UserRoles.FirstOrDefault(u => u.UserId == dbUser.Id);
-                if (userRole != null) // user already has a role
-                {
-                    var previousRoleName = _db.Roles
-                        .Where(u => u.Id == userRole.RoleId)
-                        .Select(e => e.Name)
-                        .FirstOrDefault();
-                    // Removing old role from user
-                    await _userManager.RemoveFromRoleAsync(dbUser, previousRoleName);
-                }
-
-                // Adding new role
-                await _userManager.AddToRoleAsync(dbUser, _db.Roles.FirstOrDefault(u => u.Id == user.RoleId)!.Name);
-
-                // Updating the name
-                dbUser.Name = user.Name;
-
-                await _db.SaveChangesAsync();
-
-                TempData["success"] = "User Edited Successfully.";
-
-                return RedirectToAction("Index", "User");
-            }
-
-            user.RoleList = _db.Roles.Select(u => new SelectListItem
-            {
-                Text = u.Name,
-                Value = u.Id,
-            });
-
-            return View(user);
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult LockUnlock(string userId)
+        public IActionResult Edit(User user)
         {
-            var dbUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId);
-            if (dbUser == null)
+            try
             {
-                return NotFound();
-            }
+                if (ModelState.IsValid)
+                {
+                    var dbUser = GetUserByIdFromDatabase(user.Id.ToString());
+                    if (dbUser == null)
+                    {
+                        return NotFound();
+                    }
 
-            if (dbUser.LockoutEnd != null && dbUser.LockoutEnd > DateTime.Now)
+                    var userRole = GetUserRoleFromDatabase(user.Id.ToString());
+                    if (userRole != null) // user already has a role
+                    {
+                        var previousRoleName = GetRoleNameByIdFromDatabase(userRole.RoleId.ToString());
+                        // Removing old role from user
+                        RemoveUserFromRoleInDatabase(dbUser.Id.ToString(), previousRoleName);
+                    }
+
+                    // Adding new role
+                    AddUserToRoleInDatabase(dbUser.Id.ToString(), user.RoleId.ToString());
+
+                    // Updating the name
+                    dbUser.Name = user.Name;
+
+                    TempData["success"] = "User Edited Successfully.";
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                //user.RoleList = GetRolesFromDatabase().Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                //{
+                //    Text = u.Name,
+                //    Value = u.Id.ToString(),
+                //});
+
+                return View(user);
+            }
+            catch (Exception ex)
             {
-                // User is locked and we have to unlock
-                dbUser.LockoutEnd = DateTime.Now;
-                TempData["success"] = "User unlocked successfully";
+                TempData["error"] = "An error occurred: " + ex.Message;
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                // User is not locked 
-                dbUser.LockoutEnd = DateTimeOffset.Now.AddYears(50);
-                TempData["success"] = "User locked successfully";
-            }
-
-            _db.SaveChanges();
-
-            return RedirectToAction("Index", "User");
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(string userId)
         {
-            var dbUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId);
-            if (dbUser == null)
+            try
             {
-                return NotFound();
-            }
-
-            _db.ApplicationUser.Remove(dbUser);
-            _db.SaveChanges();
-            TempData["success"] = "User deleted successfully.";
-            return RedirectToAction("Index", "User");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ManageUserClaims(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var existingUserClaims = await _userManager.GetClaimsAsync(user);
-
-            var model = new UserClaimsViewModel()
-            {
-                UserId = userId
-            };
-            foreach (var claim in ClaimStore.ClaimsList)
-            {
-                UserClaim userClaim = new UserClaim()
+                var dbUser = GetUserByIdFromDatabase(userId);
+                if (dbUser == null)
                 {
-                    ClaimType = claim.Type
-                };
-                if (existingUserClaims.Any(u => u.Type == claim.Type))
-                {
-                    userClaim.IsSelected = true;
+                    return NotFound();
                 }
 
-                model.UserClaims.Add(userClaim);
+                DeleteUserFromDatabase(dbUser.Id.ToString());
+                TempData["success"] = "User deleted successfully.";
+                return RedirectToAction(nameof(Index));
             }
-
-            return View(model);
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred: " + ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel userClaimsViewModel)
+        private List<User> GetUserListFromDatabase()
         {
-            var user = await _userManager.FindByIdAsync(userClaimsViewModel.UserId);
-            if (user == null)
+            var userList = new List<User>();
+            using (var connection = new NpgsqlConnection(_connectionString))
             {
-                return NotFound();
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Users", connection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userList.Add(new User
+                            {
+                                Id = Guid.Parse(reader["Id"].ToString()),
+                                Name = reader["Name"].ToString()
+                            });
+                        }
+                    }
+                }
             }
+            return userList;
+        }
 
-            var claims = await _userManager.GetClaimsAsync(user);
-            var delResult =
-                await _userManager.RemoveClaimsAsync(user, claims); // removing all claims before adding/re-adding them
-
-            if (!delResult.Succeeded)
+        private List<Role> GetUserRolesFromDatabase()
+        {
+            var userRoles = new List<Role>();
+            using (var connection = new NpgsqlConnection(_connectionString))
             {
-                TempData["error"] = "Error while removing claims.";
-                return View(userClaimsViewModel);
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Roles", connection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userRoles.Add(new Role
+                            {
+                                UserId = reader["UserId"].ToString(),
+                                RoleId = reader["RoleId"].ToString()
+                            });
+                        }
+                    }
+                }
             }
+            return userRoles;
+        }
 
-            var result = await _userManager.AddClaimsAsync(user, userClaimsViewModel.UserClaims
-                .Where(u => u.IsSelected)
-                .Select(u => new Claim(u.ClaimType, u.IsSelected.ToString())));
-
-            if (!result.Succeeded)
+        private List<Role> GetRolesFromDatabase()
+        {
+            var roles = new List<Role>();
+            using (var connection = new NpgsqlConnection(_connectionString))
             {
-                TempData["error"] = "Error while removing claims.";
-                return View(userClaimsViewModel);
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Roles", connection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            roles.Add(new Role
+                            {
+                                Id = reader["Id"].ToString(),
+                                Name = reader["Name"].ToString()
+                            });
+                        }
+                    }
+                }
             }
+            return roles;
+        }
 
-            TempData["success"] = "Claims updated successfully.";
-            return RedirectToAction("Index", "User");
+        private User GetUserByIdFromDatabase(string userId)
+        {
+            User user = null;
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Users WHERE Id = @UserId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            user = new User
+                            {
+                                Id = Guid.Parse(reader["Id"].ToString()),
+                                Name = reader["Name"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+            return user;
+        }
+
+        private User GetUserRoleFromDatabase(string userId)
+        {
+            User userRole = null;
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Roles WHERE UserId = @UserId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            userRole = new User
+                    {
+                        Id = Guid.Parse(reader["UserId"].ToString()),
+                        Role = new Role
+                        {
+                            UserId = reader["UserId"].ToString(),
+                            RoleId = reader["RoleId"].ToString()
+                        }
+                    };
+                        }
+                    }
+                }
+            }
+            return userRole;
+        }
+
+        private string GetRoleNameByIdFromDatabase(string roleId)
+        {
+            string roleName = null;
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT Name FROM Roles WHERE Id = @RoleId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@RoleId", roleId);
+                    roleName = cmd.ExecuteScalar()?.ToString();
+                }
+            }
+            return roleName;
+        }
+
+        private void RemoveUserFromRoleInDatabase(string userId, string roleName)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("DELETE FROM UserRoles WHERE UserId = @UserId AND RoleId = (SELECT Id FROM Roles WHERE Name = @RoleName)", connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@RoleName", roleName);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void AddUserToRoleInDatabase(string userId, string roleId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("INSERT INTO UserRoles (UserId, RoleId) VALUES (@UserId, @RoleId)", connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@RoleId", roleId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void UpdateUserLockoutInDatabase(string userId, DateTimeOffset? lockoutEnd)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("UPDATE Users SET LockoutEnd = @LockoutEnd WHERE Id = @UserId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@LockoutEnd", lockoutEnd);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void DeleteUserFromDatabase(string userId)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("DELETE FROM Users WHERE Id = @UserId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

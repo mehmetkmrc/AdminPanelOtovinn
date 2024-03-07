@@ -6,7 +6,7 @@
 
 
 @{
-	Layout = "/Areas/Identity/Pages/Account/_EnterLayout.cshtml";
+	Layout = "/Views/Shared/_EnterLayout.cshtml";
 }
 
 <!--begin::Heading-->
@@ -50,9 +50,9 @@
 <!--begin::Input group=-->
 <div class="fv-row mb-8">
 	<!--begin::Email-->
-	<label asp-for="Email" class="form-label">Mail Adresinizi Giriniz:</label>
-	<input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" />
-	<span asp-validation-for="Email" class="text-danger"></span>
+	<label asp-for="MailAddress" class="form-label">Mail Adresinizi Giriniz:</label>
+	<input asp-for="MailAddress" class="form-control" autocomplete="username" aria-required="true" />
+	<span asp-validation-for="MailAddress" class="text-danger"></span>
 	<!--end::Email-->
 </div>
 <!--end::Input group=-->

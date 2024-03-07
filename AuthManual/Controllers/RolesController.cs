@@ -1,31 +1,27 @@
-﻿using AuthManual.Data;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using AuthManual.Models;
+
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 
 namespace AuthManual.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   
     public class RolesController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly string _connectionString;
 
-        public RolesController(ApplicationDbContext db, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public RolesController()
         {
-            _db = db;
-            _userManager = userManager;
-            _roleManager = roleManager;
+
+            _connectionString = "DefaultConnection"; // Veritabanı bağlantı dizesini buraya ekleyin
         }
 
         public IActionResult Index()
         {
-            var roles = _db.Roles.ToList();
+            var roles = GetRolesFromDatabase();
             return View(roles);
         }
-
 
         [HttpGet]
         public IActionResult Upsert(string id)
@@ -36,65 +32,192 @@ namespace AuthManual.Controllers
             }
             else // if not it is update
             {
-                var role = _db.Roles.FirstOrDefault(x => x.Id == id);
+                var role = GetRoleById(id);
                 return View(role);
             }
         }
 
         [HttpPost]
         [AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Upsert(IdentityRole roleObj)
+        public IActionResult Upsert(Role role)
         {
-            if (await _roleManager.RoleExistsAsync(roleObj.Name))
+            try
             {
-                // error
-                TempData["error"] = "Role already exists.";
-                return RedirectToAction("Index", "Roles");
+                if (RoleExists(role.Name))
+                {
+                    TempData["error"] = "Role already exists.";
+                    return RedirectToAction(nameof(Index));
+                }
 
+                if (string.IsNullOrEmpty(role.Id))
+                {
+                    // create
+                    AddRoleToDatabase(role.Name);
+                    TempData["success"] = "Role created successfully.";
+                }
+                else
+                {
+                    // update
+                    UpdateRoleInDatabase(role.Id, role.Name);
+                    TempData["success"] = "Role updated successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred: " + ex.Message;
             }
 
-            if (string.IsNullOrEmpty(roleObj.Id))
-            {
-                // create
-                await _roleManager.CreateAsync(new IdentityRole() { Name = roleObj.Name });
-                TempData["success"] = "Role created successfully.";
-            }
-            else
-            {
-                // update
-                var dbRole = _db.Roles.FirstOrDefault(r => r.Id == roleObj.Id);
-                dbRole!.Name = roleObj.Name;
-                dbRole!.NormalizedName = roleObj.Name.ToUpper();
-                var result = await _roleManager.UpdateAsync(dbRole);
-                TempData["success"] = "Role updated successfully.";
-            }
-
-            return RedirectToAction("Index", "Roles");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         [AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Delete(string id)
+        public IActionResult Delete(string id)
         {
-            var dbRole = _db.Roles.FirstOrDefault(u => u.Id == id);
-            if (dbRole == null)
+            try
             {
-                TempData["error"] = "Role not found.";
-                return RedirectToAction("Index", "Roles");
+                if (id == null)
+                {
+                    TempData["error"] = "Role ID is null.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (RoleHasUsers(id))
+                {
+                    TempData["error"] = "Cannot delete role. There are users with this role.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                DeleteRoleFromDatabase(id);
+                TempData["success"] = "Role deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred: " + ex.Message;
             }
 
-            var userRoles = _db.UserRoles.Count(u => u.RoleId == id);
-            if (userRoles > 0)
-            {
-                TempData["error"] = "Cannot delete role. There are users with this role.";
-                return RedirectToAction("Index", "Roles");
-            }
-
-            await _roleManager.DeleteAsync(dbRole);
-            TempData["success"] = "Role deleted successfully.";
-            return RedirectToAction("Index", "Roles");
+            return RedirectToAction(nameof(Index));
         }
 
+        private List<Role> GetRolesFromDatabase()
+        {
+            var roles = new List<Role>();
 
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Roles", connection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var role = new Role
+                            {
+                                Id = reader["Id"].ToString(),
+                                Name = reader["Name"].ToString()
+                            };
+                            roles.Add(role);
+                        }
+                    }
+                }
+            }
+
+            return roles;
+        }
+
+        private Role GetRoleById(string id)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT * FROM Roles WHERE Id = @Id", connection))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Role
+                            {
+                                Id = reader["Id"].ToString(),
+                                Name = reader["Name"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private bool RoleExists(string roleName)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT COUNT(*) FROM Roles WHERE Name = @Name", connection))
+                {
+                    cmd.Parameters.AddWithValue("@Name", roleName);
+                    var count = (long)cmd.ExecuteScalar();
+                    return count > 0;
+                }
+            }
+        }
+
+        private void AddRoleToDatabase(string roleName)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("INSERT INTO Roles (Id, Name) VALUES (@Id, @Name)", connection))
+                {
+                    cmd.Parameters.AddWithValue("@Id", Guid.NewGuid().ToString());
+                    cmd.Parameters.AddWithValue("@Name", roleName);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void UpdateRoleInDatabase(string id, string roleName)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("UPDATE Roles SET Name = @Name WHERE Id = @Id", connection))
+                {
+                    cmd.Parameters.AddWithValue("@Name", roleName);
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void DeleteRoleFromDatabase(string id)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("DELETE FROM Roles WHERE Id = @Id", connection))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private bool RoleHasUsers(string id)
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand("SELECT COUNT(*) FROM Users WHERE Role = @RoleId", connection))
+                {
+                    cmd.Parameters.AddWithValue("@RoleId", id);
+                    var count = (long)cmd.ExecuteScalar();
+                    return count > 0;
+                }
+            }
+        }
     }
 }

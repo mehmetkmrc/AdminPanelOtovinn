@@ -52,11 +52,7 @@ License: For each use you must have a valid license purchased only from above li
 		var defaultThemeMode = "light"; var themeMode; if (document.documentElement) { if (document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if (localStorage.getItem("data-bs-theme") !== null) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }
 
 	</script>
-	@using Microsoft.AspNetCore.Identity
-
-	@inject SignInManager<IdentityUser> SignInManager
-	@inject UserManager<IdentityUser> UserManager
-
+	
 	<!--end::Theme mode setup on page load-->
 	<!--begin::App-->
 	<div class="d-flex flex-column flex-root app-root" id="kt_app_root">
@@ -114,7 +110,7 @@ License: For each use you must have a valid license purchased only from above li
 								{
 									<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item here show">
 										<!--begin:Menu link-->
-										<a href="/Photo/Create" class="menu-link">
+										<a href="/Screen/Create" class="menu-link">
 
 											<span class="menu-title">Admin Paneli</span>
 											<span class="menu-arrow d-lg-none"></span>
@@ -139,7 +135,7 @@ License: For each use you must have a valid license purchased only from above li
                         
 							
 							
-								@if (SignInManager.IsSignedIn(User))
+								@* @if (SignInManager.IsSignedIn(User))
 								{
 							<div class="app-navbar flex-shrink-0">
 									<li class="nav-item">
@@ -151,7 +147,17 @@ License: For each use you must have a valid license purchased only from above li
 										</form>
 									</li>
 							</div>
-								}
+								} *@
+						<li class="nav-item">
+							<form asp-action="Logout" asp-controller="Account" method="post">
+								<button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+							</form>
+						</li>
+
+
+
+
+
 								
 							
                         
@@ -227,7 +233,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link " href="/Photo/Index/31" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link " href="/Screen/Index/b482d2d0-fcbd-46e6-a4e8-11e04987eb05" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -240,7 +246,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/16" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -253,7 +259,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link " href="/Photo/Index/12" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link " href="" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -266,7 +272,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link " href="/Photo/Index/14" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link " href="" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -281,7 +287,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/17" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/17" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -296,7 +302,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/46" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/46" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -309,7 +315,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/26">
+												<a class="menu-link" href="/26">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -322,7 +328,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/28" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/28" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -335,7 +341,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/37" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/37" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -348,7 +354,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/22" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/22" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -361,7 +367,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/29" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/29" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -374,7 +380,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/59" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/59" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -387,7 +393,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/21" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/21" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -400,7 +406,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/17" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/17" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -413,7 +419,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/35" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/35" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -426,7 +432,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/19" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/19" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -439,7 +445,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/55" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/55" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -452,7 +458,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/20" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/20" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -465,7 +471,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/60" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/60" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -478,7 +484,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/14" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/14" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -491,7 +497,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/18" onclick="toggleMenuItemActive(this)">
+												<a class="menu-link" href="/18" onclick="toggleMenuItemActive(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -504,7 +510,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/41" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/41" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -517,7 +523,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/36" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/36" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -530,7 +536,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/57" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/57" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -543,7 +549,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/32" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/32" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -556,7 +562,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/38" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/38" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -569,7 +575,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/43" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/43" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -582,7 +588,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/12" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/12" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -595,7 +601,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/15" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/15" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -608,7 +614,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/34" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/34" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -621,7 +627,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/24" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/24" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -634,7 +640,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/18" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/18" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -647,7 +653,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/56" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/56" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -660,7 +666,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/25" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/25" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
@@ -673,7 +679,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin:Menu item-->
 											<div class="menu-item">
 												<!--begin:Menu link-->
-												<a class="menu-link" href="/Photo/Index/49" onclick="activateMenuItem(this)">
+												<a class="menu-link" href="/49" onclick="activateMenuItem(this)">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot">
 														</span>
